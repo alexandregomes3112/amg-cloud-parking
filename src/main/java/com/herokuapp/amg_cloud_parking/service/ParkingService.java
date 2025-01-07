@@ -1,5 +1,6 @@
 package com.herokuapp.amg_cloud_parking.service;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -15,16 +16,6 @@ import com.herokuapp.amg_cloud_parking.model.Parking;
 public class ParkingService {
 
     private static Map<String, Parking> parkingMap = new HashMap<>();
-
-    static {
-        var id = getUUID();
-        var id1 = getUUID();
-        Parking parking = new Parking(id, "ABC-1234", "SP", "Meca One", "PRETO");
-        Parking parking1 = new Parking(id1, "AEI-1111", "SC", "Ferrari Enzo", "VERMELHO");
-        parkingMap.put(id, parking);
-        parkingMap.put(id1, parking1);
-
-    }
 
     
     public List<Parking> findAll() {
@@ -62,6 +53,23 @@ public class ParkingService {
         parking.setColor(parkingCreate.getColor());
         parkingMap.replace(id, parking);
         return parking;
+    }
+
+    public Parking exit(String id) {
+        Parking parking = findById(id);
+        LocalDateTime checkOutTime = LocalDateTime.now();
+        parking.setCheckOut(checkOutTime);
+        
+        // Calculate the duration between check-in and check-out
+        Duration duration = Duration.between(parking.getCheckIn(), checkOutTime);
+        long seconds = duration.getSeconds();
+        
+         // Charge 0.01 per second
+         double bill = seconds * 0.01;
+         parking.setBill(bill);
+ 
+         parkingMap.replace(id, parking);
+         return parking;
     }
 
 }
