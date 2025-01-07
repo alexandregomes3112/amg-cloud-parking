@@ -1,16 +1,17 @@
-package com.herokuapp.amg_cloud_parking.controller.dto;
+package com.herokuapp.amg_cloud_parking.controller.mapper;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
-import com.herokuapp.amg_cloud_parking.controller.mapper.ParkingDTO;
+import com.herokuapp.amg_cloud_parking.controller.dto.ParkingDTO;
 import com.herokuapp.amg_cloud_parking.model.Parking;
 
 @Component
 public class ParkingMapper {
-    
+
     private static final ModelMapper MODEL_MAPPER = new ModelMapper();
 
     public ParkingDTO parkingDTO(Parking parking) {
@@ -18,7 +19,7 @@ public class ParkingMapper {
     }
 
     public List<ParkingDTO> toParkingDTOList(List<Parking> parkingList) {
-        return null;
+        return parkingList.stream().map(this::parkingDTO).collect(Collectors.toList());
     }
 
 }
