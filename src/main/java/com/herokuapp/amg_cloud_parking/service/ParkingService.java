@@ -1,5 +1,6 @@
 package com.herokuapp.amg_cloud_parking.service;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,12 +12,15 @@ import com.herokuapp.amg_cloud_parking.model.Parking;
 @Service
 public class ParkingService {
 
-    private static Map<String, Parking> parkingMap = new HashMap();
+    private static Map<String, Parking> parkingMap = new HashMap<>();
 
     static {
         var id = getUUID();
-        Parking parking = new Parking(id, "ABC-1234", "SP", "GOL", "PRETO");
+        var id1 = getUUID();
+        Parking parking = new Parking(id, "ABC-1234", "SP", "Meca One", "PRETO");
+        Parking parking1 = new Parking(id1, "AEI-1111", "SC", "Ferrari Enzo", "VERMELHO");
         parkingMap.put(id, parking);
+        parkingMap.put(id1, parking1);
 
     }
 
@@ -27,5 +31,18 @@ public class ParkingService {
     
     private static String getUUID() {
         return UUID.randomUUID().toString().replace("-", "");
+    }
+
+    public Parking findById(String id) {
+        return parkingMap.get(id);
+
+    }
+
+    public Parking create(Parking parkingCreate) {
+        String uuid = getUUID();
+        parkingCreate.setId(uuid);
+        parkingCreate.setCheckIn(LocalDateTime.now());
+        parkingMap.put(uuid, parkingCreate);
+        return parkingCreate;
     }
 }
