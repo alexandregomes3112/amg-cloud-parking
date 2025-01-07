@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
+
+import com.herokuapp.amg_cloud_parking.exception.ParkingNotFoundException;
 import com.herokuapp.amg_cloud_parking.model.Parking;
 
 @Service
@@ -34,7 +36,11 @@ public class ParkingService {
     }
 
     public Parking findById(String id) {
-        return parkingMap.get(id);
+        Parking parking = parkingMap.get(id);
+        if (parking == null) {
+            throw new ParkingNotFoundException(id);
+        }
+        return parking;
 
     }
 
@@ -45,4 +51,17 @@ public class ParkingService {
         parkingMap.put(uuid, parkingCreate);
         return parkingCreate;
     }
+
+    public void delete(String id) {
+        findById(id);
+        parkingMap.remove(id);
+    }
+
+    public Parking update(String id, Parking parkingCreate){
+        Parking parking = findById(id);
+        parking.setColor(parkingCreate.getColor());
+        parkingMap.replace(id, parking);
+        return parking;
+    }
+
 }
