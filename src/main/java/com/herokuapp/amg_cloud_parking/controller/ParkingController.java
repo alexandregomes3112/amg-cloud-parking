@@ -16,8 +16,12 @@ import com.herokuapp.amg_cloud_parking.controller.dto.ParkingDTO;
 import com.herokuapp.amg_cloud_parking.model.Parking;
 import com.herokuapp.amg_cloud_parking.service.ParkingService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
 @RequestMapping("/parking")
+@Tag(name = "Parking Controller")
 public class ParkingController {
 
     private final ParkingService parkingService;
@@ -29,7 +33,7 @@ public class ParkingController {
     }
 
     @GetMapping
-    //@Operation(summary = "List all parkings")
+    @Operation(summary = "Find all parkings")
     public ResponseEntity<List<ParkingDTO>> findAll() {
         List<Parking> parkingList = parkingService.findAll();
         List<ParkingDTO> result = parkingMapper.toParkingDTOList(parkingList);
@@ -37,7 +41,7 @@ public class ParkingController {
     }
 
     @GetMapping("/{id}")
-    //@Operation(summary = "Find parking by id")
+    @Operation(summary = "Find parking by id")
     public ResponseEntity<ParkingDTO> findById(@PathVariable String id) {
         Parking parking = parkingService.findById(id);
         ParkingDTO result = parkingMapper.toParkingDTO(parking);
@@ -45,7 +49,7 @@ public class ParkingController {
     }
 
     @PostMapping
-    //@Operation(summary = "Create a new parking")
+    @Operation(summary = "Create a new parking")
     public ResponseEntity<ParkingDTO> create(@RequestBody ParkingCreateDTO dto) {
         var parkingCreate = parkingMapper.toParkingCreate(dto);
         var parking = parkingService.create(parkingCreate);
