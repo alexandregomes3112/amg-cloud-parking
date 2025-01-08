@@ -1,74 +1,74 @@
 package com.herokuapp.amg_cloud_parking.service;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import com.herokuapp.amg_cloud_parking.exception.ParkingNotFoundException;
 import com.herokuapp.amg_cloud_parking.model.Parking;
+import com.herokuapp.amg_cloud_parking.repository.ParkingRepository;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class ParkingService {
 
-    private static Map<String, Parking> parkingMap = new HashMap<>();
+    private final ParkingRepository parkingRepository;
 
+    public ParkingService(ParkingRepository parkingRepository) {
+        this.parkingRepository = parkingRepository;
+    }
     
+    @Transactional
     public List<Parking> findAll() {
-        return parkingMap.values().stream().collect(Collectors.toList());
+        return parkingRepository.findAll();
     }
     
     private static String getUUID() {
         return UUID.randomUUID().toString().replace("-", "");
     }
 
+    @Transactional
     public Parking findById(String id) {
-        Parking parking = parkingMap.get(id);
-        if (parking == null) {
-            throw new ParkingNotFoundException(id);
-        }
-        return parking;
-
+        return parkingRepository
+            .findById(id)
+            .orElseThrow(() -> 
+            new ParkingNotFoundException(id));
     }
 
+    @Transactional
     public Parking create(Parking parkingCreate) {
         String uuid = getUUID();
         parkingCreate.setId(uuid);
         parkingCreate.setCheckIn(LocalDateTime.now());
-        parkingMap.put(uuid, parkingCreate);
+        parkingRepository.save(parkingCreate);
         return parkingCreate;
     }
 
+    @Transactional
     public void delete(String id) {
         findById(id);
-        parkingMap.remove(id);
+        parkingRepository.deleteById(id);
     }
 
+    @Transactional
     public Parking update(String id, Parking parkingCreate){
         Parking parking = findById(id);
         parking.setColor(parkingCreate.getColor());
-        parkingMap.replace(id, parking);
+        parking.setModel(parkingCreate.getModel());
+        parking.setState(parkingCreate.getState());
+        parking.setLicense(parkingCreate.getLicense());
+        parkingRepository.save(parking);
         return parking;
     }
 
+    @Transactional
     public Parking exit(String id) {
         Parking parking = findById(id);
-        LocalDateTime checkOutTime = LocalDateTime.now();
-        parking.setCheckOut(checkOutTime);
-        
-        // Calculate the duration between check-in and check-out
-        Duration duration = Duration.between(parking.getCheckIn(), checkOutTime);
-        long seconds = duration.getSeconds();
-        
-         // Charge 0.01 per second
-         double bill = seconds * 0.01;
-         parking.setBill(bill);
- 
-         parkingMap.replace(id, parking);
+        parking.setCheckOut(LocalDateTime.now());
+        parking.setBill(ParkingCheckout.getBill(parking));
+        parkingRepository.save(parking);
          return parking;
     }
 
