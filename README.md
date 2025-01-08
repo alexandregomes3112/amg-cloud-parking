@@ -267,11 +267,13 @@ AMG Cloud Parking é um projeto de API REST baseado em Java desenvolvido como pa
  ```bash
  clone https://github.com/seunomedeusuario/amg-cloud-parking.git
 cd amg-cloud-parking
+```
 
 1. **Construa o projeto**
 ```sh
 mvn clean install
 ```
+
 1. **Configure o banco de dados**
 Atualize o arquivo `application.properties` com sua configuração de banco de dados.
 
@@ -287,6 +289,7 @@ spring.jpa.show-sql=true
 ## Executando o aplicativo
 
 1. **Execute o aplicativo**
+   
 ```sh
 mvn spring-boot:run
 ```
@@ -295,7 +298,7 @@ mvn spring-boot:run
 O aplicativo estará disponível em `http://localhost:8080`
 `USER` e `PASSWORD` são `user` e `1234` respectivamente
 
-1. **SWAGGER*
+1. **SWAGGER**
 A documentação da API está disponível em `http://localgost:8080/swagger-ui.html`
 
 ##Licença
